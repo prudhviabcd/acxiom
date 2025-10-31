@@ -38,6 +38,7 @@ $user = $_SESSION['user'];
             <button onclick="window.location.href='cart.php'">Cart</button>
             <button onclick="window.location.href='guest_list.php'">Guest List</button>
             <button onclick="window.location.href='order_status.php'">Order Status</button>
+            <button onclick="window.location.href='../chart.php'">📊 View Chart</button>
             <button class="logout" onclick="window.location.href='logout.php'">LogOut</button>
         </div>
     </div>
