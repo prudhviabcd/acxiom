@@ -1,39 +1,58 @@
-<?php 
-include('../db.php');
+<?php
 session_start();
-if(!isset($_SESSION['user'])){
-  header("Location: login.php");
-  exit();
+include('../db.php');
+
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
 }
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>User Dashboard</title>
-  <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Welcome User</h2>
-    <table border="1" width="100%" cellpadding="10">
-      <tr><th>ID</th><th>Product</th><th>Price</th><th>Image</th><th>Action</th></tr>
-      <?php
-        $res = $conn->query("SELECT * FROM product");
-        while($row = $res->fetch_assoc()){
-          echo "<tr>
-                  <td>{$row['product_id']}</td>
-                  <td>{$row['name']}</td>
-                  <td>{$row['price']}</td>
-                  <td><img src='../uploads/{$row['image']}' width='80'></td>
-                  <td><a href='cart.php?id={$row['product_id']}' class='btn'>Add to Cart</a></td>
-                </tr>";
-        }
-      ?>
-    </table>
-    <div class="buttons">
-      <a href="cart.php" class="btn">View Cart</a>
-      <a href="logout.php" class="btn" style="background:#e74c3c;">Logout</a>
+<div class="admin-dashboard">
+
+    <!-- Header Section -->
+    <!-- Header Section -->
+<div class="admin-header">
+  <button class="nav-btn" onclick="window.location.href='home.php'">Home</button>
+  <button class="nav-btn" style="background-color:#2196f3; color:white;" <button onclick="window.location.href='../chart.php'">📊 View Chart</button>
+<button onclick="window.location.href='maintenance.php'">Maintenance</button>
+<button onclick="window.location.href='add_membership.php'">Add Membership</button>
+<button onclick="window.location.href='update_membership.php'">Update Membership</button>
+
+  <h2 class="admin-title">Admin Dashboard</h2>
+  <button class="nav-btn" onclick="window.location.href='logout.php'">LogOut</button>
+</div>
+
+
+    <!-- Main Container -->
+    <div class="admin-container">
+        <!-- Membership Section -->
+        <div class="admin-section">
+            <h3>Membership</h3>
+            <div class="admin-buttons">
+                <button class="action-btn">Add</button>
+                <button class="action-btn">Update</button>
+            </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div class="admin-section">
+            <h3>User Management</h3>
+            <div class="admin-buttons">
+                <button class="action-btn">Add</button>
+                <button class="action-btn">Update</button>
+            </div>
+        </div>
     </div>
-  </div>
+
+</div>
 </body>
 </html>
