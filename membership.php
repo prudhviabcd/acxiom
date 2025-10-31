@@ -1,56 +1,103 @@
 <?php
-include('../db.php');
 session_start();
-if(!isset($_SESSION['admin'])){
-  header("Location: login.php");
-  exit();
+include('db.php');
+
+if (!isset($_SESSION['user'])) {
+    header("Location: user_login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Add new membership
+if (isset($_POST['add'])) {
+    $plan = $_POST['plan'];
+    $start = date('Y-m-d');
+    $months = 6;
+    if ($plan == '1 year') $months = 12;
+    if ($plan == '2 years') $months = 24;
+
+    $end = date('Y-m-d', strtotime("+$months months", strtotime($start)));
+
+    mysqli_query($conn, "INSERT INTO membership (user_id, plan, start_date, end_date)
+                         VALUES ('$user_id', '$plan', '$start', '$end')");
+}
+
+// Update membership (extend)
+if (isset($_POST['update'])) {
+    $plan = $_POST['plan'];
+    $months = 6;
+    if ($plan == '1 year') $months = 12;
+    if ($plan == '2 years') $months = 24;
+
+    mysqli_query($conn, "UPDATE membership 
+                         SET end_date = DATE_ADD(end_date, INTERVAL $months MONTH)
+                         WHERE user_id = '$user_id'");
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Membership Management</title>
-  <link rel="stylesheet" href="../css/style.css">
+<title>Membership</title>
+<style>
+body {
+    background: #f1f8e9;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+h2 { color: #388e3c; }
+form {
+    background: white;
+    display: inline-block;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+select, button {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    background: #388e3c;
+    color: white;
+    cursor: pointer;
+}
+button:hover {
+    background: #2e7d32;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>Manage Memberships</h2>
-    <form method="post">
-      <label>Vendor ID:</label><br>
-      <input type="number" name="vendor_id" required><br>
-      <label>Duration (in months):</label><br>
-      <input type="number" name="duration" required><br>
-      <input type="submit" name="add" value="Add Membership" class="btn">
-    </form>
+<h2>🎟 Membership Management</h2>
 
-    <h3>Existing Memberships</h3>
-    <table border="1" width="100%" cellpadding="10">
-      <tr><th>ID</th><th>Vendor ID</th><th>Duration</th><th>Start Date</th><th>End Date</th></tr>
-      <?php
-        $res = $conn->query("SELECT * FROM membership");
-        while($row = $res->fetch_assoc()){
-          echo "<tr>
-            <td>{$row['membership_id']}</td>
-            <td>{$row['vendor_id']}</td>
-            <td>{$row['duration']}</td>
-            <td>{$row['start_date']}</td>
-            <td>{$row['end_date']}</td>
-          </tr>";
-        }
-      ?>
-    </table>
-    <a href='dashboard.php' class='btn'>Back</a>
-  </div>
-</body>
-</html>
+<form method="post">
+    <label>Choose Duration:</label><br>
+    <select name="plan" required>
+        <option value="6 months">6 months</option>
+        <option value="1 year">1 year</option>
+        <option value="2 years">2 years</option>
+    </select><br>
+    <button name="add">Add Membership</button>
+    <button name="update">Extend Membership</button>
+</form>
 
+<h3>Your Membership Details:</h3>
+<table border="1" align="center" cellpadding="8">
+<tr><th>Plan</th><th>Start</th><th>End</th></tr>
 <?php
-if(isset($_POST['add'])){
-  $vid = $_POST['vendor_id'];
-  $duration = $_POST['duration'];
-  $start = date('Y-m-d');
-  $end = date('Y-m-d', strtotime("+$duration months", strtotime($start)));
-  $conn->query("INSERT INTO membership(vendor_id, duration, start_date, end_date) VALUES('$vid','$duration','$start','$end')");
-  echo "<script>alert('Membership added successfully');window.location='membership.php';</script>";
+$res = mysqli_query($conn, "SELECT * FROM membership WHERE user_id='$user_id'");
+while($r = mysqli_fetch_assoc($res)) {
+    echo "<tr>
+        <td>{$r['plan']}</td>
+        <td>{$r['start_date']}</td>
+        <td>{$r['end_date']}</td>
+    </tr>";
 }
 ?>
+</table>
+
+</body>
+</html>
