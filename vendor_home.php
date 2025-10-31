@@ -73,6 +73,8 @@ $vendor_email = $_SESSION['vendor'];
             <a href="your_items.php" class="btn">Your Items</a>
             <a href="add_item.php" class="btn">Add New Item</a>
             <a href="transaction.php" class="btn">Transaction</a>
+            <a href="../chart.php" class="btn">📊 View Chart</a>
+
             <a href="logout.php" class="btn">LogOut</a>
         </div>
     </div>
